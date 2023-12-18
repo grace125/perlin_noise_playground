@@ -15,7 +15,7 @@
 }
 #endif
 
-@group(0) @binding(100) 
+@group(1) @binding(100) 
 var<uniform> mode: u32;
 
 @fragment
@@ -30,24 +30,24 @@ fn fragment(
 
     switch mode {
         // Spotted
-        case 0: {
+        case 0u: {
             color = vec4(vec3(noise_3d(in.world_position.xyz, 0.04)), 1.0);
         }
         // Bumpy
-        case 1: {
+        case 1u: {
             in.world_normal += dnoise_3d(in.world_position.xyz, 0.03)/30.0;
-            color = vec4(1.0, 1.0, 1.0, 1.0);
+            color = vec4(1.0);
         }
         // Stucco
-        case 2: {
-
+        case 2u: {
+            
         }
         // Disgusting
-        case 3: {
-
+        case 3u: {
+            
         }
         // Bozo
-        case 4: {
+        case 4u: {
             let sample = noise_3d(in.world_position.xyz, 0.15);
 
             if sample < 0.3 {
@@ -67,8 +67,12 @@ fn fragment(
             }
         }
         // Wrinkled
-        case 5: {
-
+        case 5u: {
+            for (var i = 0.125; i < 256.0001; i = 2.0*i) {
+                in.world_normal += dnoise_3d(in.world_position.xyz, 1.0/i)/(0.6*i);
+            }
+            
+            color = vec4(1.0, 1.0, 1.0, 1.0);
         }
         default: {}
     }
