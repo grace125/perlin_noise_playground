@@ -33,19 +33,33 @@ fn setup(
     mut meshes: ResMut<Assets<Mesh>>, 
     mut materials: ResMut<Assets<DoughnutMaterial>>
 ) {
-    commands.spawn(MaterialMeshBundle {
-        mesh: meshes.add(shape::Torus::default().into()),
-        material: materials.add(DoughnutMaterial {
-            base: default(),
-            extension: DoughnutExtension { 
-                mode: 0
-            },
-        }),
-        ..default()
-    });
+    for i in 0..3 {
+        for j in 0..2 {
+            let mode = 3*j + i;
+
+            commands.spawn(MaterialMeshBundle {
+                mesh: meshes.add(shape::Torus::default().into()),
+                material: materials.add(DoughnutMaterial {
+                    base: default(),
+                    extension: DoughnutExtension { 
+                        mode,
+                    },
+                }),
+                transform: Transform::from_xyz(
+                    j as f32 * 5.0 - 2.5, 
+                    0.0, 
+                    i as f32 * -5.0 + 5.0,
+                ),
+                ..default()
+            });
+        }
+    }
 
     commands.spawn((
-        Camera3dBundle::default(),
+        Camera3dBundle {
+            transform: Transform::from_xyz(0.0, 20.0, 0.0).looking_at(Vec3::ZERO, Vec3::Y),
+            ..default()
+        },
         CameraController::default(),
         NormalPrepass,
         DepthPrepass,
