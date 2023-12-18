@@ -1,0 +1,19 @@
+[package]
+name = "perlin_noise"
+version = "0.1.0"
+edition = "2021"
+author = "Grace Schorno"
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[features]
+# For release builds: cargo build --release --no-default-features
+default = ["fast_compile"]
+fast_compile = ["bevy/dynamic_linking", "bevy/file_watcher"]
+
+[dependencies]
+bevy = "0.12.1"
