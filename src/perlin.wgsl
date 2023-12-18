@@ -1,7 +1,6 @@
 #define_import_path perlin_noise::perlin
 
 // Pseudo-random algorithm from https://thebookofshaders.com/10/
-// I've seen this in a couple places, it seems to be "common knowledge".
 fn random(seed: f32) -> f32 {
     return fract(100000.0f*sin(seed));
 }
@@ -110,4 +109,32 @@ fn noise_4d(pixel: vec4<f32>, unit: f32) -> f32 {
     let xyzr = mix(xylr, xyrr, t.z);
 
     return mix(xyzl, xyzr, t.w);
+}
+
+fn dnoise(pixel: f32, unit: f32) -> f32 {
+    return (noise(pixel + 0.01, unit) - noise(pixel - 0.01, unit))/(2.0*unit);
+}
+
+fn dnoise_2d(pixel: vec2<f32>, unit: f32) -> vec2<f32> {
+    return vec2(
+        (noise_2d(pixel + vec2(0.01, 0.0), unit) - noise_2d(pixel - vec2(0.01, 0.0), unit))/(2.0*unit),
+        (noise_2d(pixel + vec2(0.0, 0.01), unit) - noise_2d(pixel - vec2(0.0, 0.01), unit))/(2.0*unit),
+    );
+}
+
+fn dnoise_3d(pixel: vec3<f32>, unit: f32) -> vec3<f32> {
+    return vec3(
+        (noise_3d(pixel + vec3(0.01, 0.0, 0.0), unit) - noise_3d(pixel - vec3(0.01, 0.0, 0.0), unit))/(2.0*unit),
+        (noise_3d(pixel + vec3(0.0, 0.01, 0.0), unit) - noise_3d(pixel - vec3(0.0, 0.01, 0.0), unit))/(2.0*unit),
+        (noise_3d(pixel + vec3(0.0, 0.0, 0.01), unit) - noise_3d(pixel - vec3(0.0, 0.0, 0.01), unit))/(2.0*unit),
+    );
+}
+
+fn dnoise_4d(pixel: vec4<f32>, unit: f32) -> vec4<f32> {
+    return vec4(
+        (noise_4d(pixel + vec4(0.01, 0.0, 0.0, 0.0), unit) - noise_4d(pixel - vec4(0.01, 0.0, 0.0, 0.0), unit))/(2.0*unit),
+        (noise_4d(pixel + vec4(0.0, 0.01, 0.0, 0.0), unit) - noise_4d(pixel - vec4(0.0, 0.01, 0.0, 0.0), unit))/(2.0*unit),
+        (noise_4d(pixel + vec4(0.0, 0.0, 0.01, 0.0), unit) - noise_4d(pixel - vec4(0.0, 0.0, 0.01, 0.0), unit))/(2.0*unit),
+        (noise_4d(pixel + vec4(0.0, 0.0, 0.0, 0.01), unit) - noise_4d(pixel - vec4(0.0, 0.0, 0.0, 0.01), unit))/(2.0*unit),
+    );
 }

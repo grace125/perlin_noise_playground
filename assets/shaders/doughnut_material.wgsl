@@ -1,4 +1,4 @@
-#import perlin_noise::perlin::noise_3d
+#import perlin_noise::perlin::{noise_3d, dnoise_3d}
 #import bevy_pbr::{
     pbr_fragment::pbr_input_from_standard_material,
     pbr_functions::alpha_discard,
@@ -20,24 +20,23 @@ var<uniform> mode: u32;
 
 @fragment
 fn fragment(
-    in: VertexOutput, 
+    input: VertexOutput, 
     @builtin(front_facing) 
     is_front: bool
 ) -> FragmentOutput {
 
-    var pbr_input = pbr_input_from_standard_material(in, is_front);
-    var v: f32;
+    var in = input;
+    var color: vec4<f32>;
 
-    switch 4 { //mode {
+    switch mode {
         // Spotted
         case 0: {
-            let v = noise_3d(in.world_position.xyz, 0.04);
-
-            pbr_input.material.base_color = vec4(vec3(v), 1.0);
+            color = vec4(vec3(noise_3d(in.world_position.xyz, 0.04)), 1.0);
         }
         // Bumpy
         case 1: {
-
+            in.world_normal += dnoise_3d(in.world_position.xyz, 0.03)/30.0;
+            color = vec4(1.0, 1.0, 1.0, 1.0);
         }
         // Stucco
         case 2: {
@@ -49,22 +48,22 @@ fn fragment(
         }
         // Bozo
         case 4: {
-            let v = noise_3d(in.world_position.xyz, 0.15);
+            let sample = noise_3d(in.world_position.xyz, 0.15);
 
-            if v < 0.3 {
-                pbr_input.material.base_color = vec4(0.8f, 0.2f, 0.2f, 1.0f);
+            if sample < 0.3 {
+                color = vec4(0.8f, 0.2f, 0.2f, 1.0f);
             }
-            else if v < 0.45 {
-                pbr_input.material.base_color = vec4(0.2f, 0.8f, 0.2f, 1.0f);
+            else if sample < 0.45 {
+                color = vec4(0.2f, 0.8f, 0.2f, 1.0f);
             }
-            else if v < 0.6 {
-                pbr_input.material.base_color = vec4(0.95f, 0.95f, 0.70f, 1.0f);
+            else if sample < 0.6 {
+                color = vec4(0.95f, 0.95f, 0.70f, 1.0f);
             }
-            else if v < 0.8 {
-                pbr_input.material.base_color = vec4(0.2f, 0.15f, 0.3f, 1.0f);
+            else if sample < 0.8 {
+                color = vec4(0.2f, 0.15f, 0.3f, 1.0f);
             }
             else {
-                pbr_input.material.base_color = vec4(0.63f, 0.924f, 0.233f, 1.0f);
+                color = vec4(0.63f, 0.924f, 0.233f, 1.0f);
             }
         }
         // Wrinkled
@@ -73,6 +72,9 @@ fn fragment(
         }
         default: {}
     }
+
+    var pbr_input = pbr_input_from_standard_material(in, is_front);
+    pbr_input.material.base_color = color;
     
 #ifdef PREPASS_PIPELINE
     let out = deferred_output(in, pbr_input);
