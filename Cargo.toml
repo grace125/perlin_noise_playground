@@ -17,3 +17,6 @@ fast_compile = ["bevy/dynamic_linking", "bevy/file_watcher"]
 
 [dependencies]
 bevy = "0.12.1"
+
+[dev-dependencies]
+bevy_egui = "0.24"
