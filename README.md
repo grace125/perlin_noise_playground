@@ -35,3 +35,12 @@ The three parameters that are available are `unit` (units of world position to o
 The `exponent` parameter is a useful control to change how steep the mountains are, and `unit` changes how spread out they are.
 
 To see this example, run `cargo run --example terrain`.
+
+## Example: `fire`
+
+<img src="./assets/readme/fire.png" width="50%" height="50%"></img>
+
+This example shows how to create a relatively simple procedural fire with perlin noise.
+All of this was done by simply messing around with exponentials, multiple octaves, and with an additional warble effect.
+
+To see this example, run `cargo run --example fire`.
