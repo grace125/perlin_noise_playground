@@ -5,6 +5,7 @@
 
 use bevy::window::CursorGrabMode;
 use bevy::{input::mouse::MouseMotion, prelude::*};
+use bevy_egui::{EguiContexts, EguiClipboard};
 
 use std::f32::consts::*;
 use std::fmt;
@@ -91,8 +92,22 @@ pub struct CameraControllerPlugin;
 
 impl Plugin for CameraControllerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, camera_controller);
+        app.add_systems(Update, camera_controller.run_if(egui_unfocused))
+            .add_systems(PostUpdate, update_egui_hover.run_if(resource_exists::<EguiClipboard>()))
+            .init_resource::<EguiHover>();
     }
+}
+
+#[derive(Resource, Default)]
+pub struct EguiHover(bool);
+
+fn update_egui_hover(mut selected: ResMut<EguiHover>, mut contexts: EguiContexts) {
+    selected.0 = contexts.ctx_mut().is_pointer_over_area()
+}
+
+// Run condition for whether a mouse's position is over an egui window
+pub fn egui_unfocused(egui_hover: Res<EguiHover>) -> bool {
+    !egui_hover.0
 }
 
 fn camera_controller(
