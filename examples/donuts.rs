@@ -1,7 +1,10 @@
+//! An example using donuts to show what can be done with Perlin noise
+
 use bevy::{
     prelude::*, 
     render::render_resource::{AsBindGroup, ShaderRef},
-    pbr::{ExtendedMaterial, MaterialExtension}, window::WindowResolution, core_pipeline::prepass::{NormalPrepass, DepthPrepass, MotionVectorPrepass}
+    pbr::{ExtendedMaterial, MaterialExtension}, 
+    window::WindowResolution,
 };
 use perlin_noise::{
     PerlinPlugin, 
@@ -14,7 +17,7 @@ fn main() {
                 WindowPlugin {
                     primary_window: Some(Window {
                         resolution: WindowResolution::new(320.0, 240.0),
-                        title: "Doughnuts".to_string(),
+                        title: "Donuts".to_string(),
                         ..default()
                     }),
                     ..default()
@@ -22,7 +25,7 @@ fn main() {
             ), 
             PerlinPlugin, 
             CameraControllerPlugin,
-            MaterialPlugin::<DoughnutMaterial>::default()
+            MaterialPlugin::<DonutMaterial>::default()
         ))
         .add_systems(Startup, setup)
         .run();
@@ -31,7 +34,7 @@ fn main() {
 fn setup(
     mut commands: Commands, 
     mut meshes: ResMut<Assets<Mesh>>, 
-    mut materials: ResMut<Assets<DoughnutMaterial>>
+    mut materials: ResMut<Assets<DonutMaterial>>
 ) {
     for i in 0..3 {
         for j in 0..2 {
@@ -39,9 +42,9 @@ fn setup(
 
             commands.spawn(MaterialMeshBundle {
                 mesh: meshes.add(shape::Torus::default().into()),
-                material: materials.add(DoughnutMaterial {
+                material: materials.add(DonutMaterial {
                     base: default(),
-                    extension: DoughnutExtension { 
+                    extension: DonutExtension { 
                         mode,
                     },
                 }),
@@ -61,9 +64,6 @@ fn setup(
             ..default()
         },
         CameraController::default(),
-        NormalPrepass,
-        DepthPrepass,
-        MotionVectorPrepass
     ));
 
     commands.spawn(PointLightBundle {
@@ -72,10 +72,10 @@ fn setup(
     });
 }
 
-type DoughnutMaterial = ExtendedMaterial<StandardMaterial, DoughnutExtension>;
+type DonutMaterial = ExtendedMaterial<StandardMaterial, DonutExtension>;
 
 #[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
-pub struct DoughnutExtension {
+pub struct DonutExtension {
     #[uniform(100)]
     /// Valid doughnut modes:
     /// 
@@ -88,12 +88,12 @@ pub struct DoughnutExtension {
     mode: u32
 }
 
-impl MaterialExtension for DoughnutExtension {
+impl MaterialExtension for DonutExtension {
     fn fragment_shader() -> ShaderRef {
-        "shaders/doughnut_material.wgsl".into()
+        "shaders/donut_extension.wgsl".into()
     }
 
     fn deferred_fragment_shader() -> ShaderRef {
-        "shaders/doughnut_material.wgsl".into()
+        "shaders/donut_extension.wgsl".into()
     }
 }
