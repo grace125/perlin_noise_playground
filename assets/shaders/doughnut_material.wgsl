@@ -40,11 +40,20 @@ fn fragment(
         }
         // Stucco
         case 2u: {
-            
+            var n = normalize(dnoise_3d(in.world_position.xyz, 0.08));
+            if length(in.world_normal + n) > 1.5 {
+                in.world_normal += n/5.0;
+                color = vec4(vec3(0.95, 0.95, 0.85), 1.0);
+            }
+            else {
+                color = vec4(vec3(0.95, 0.95, 0.8), 1.0);
+            }
         }
         // Disgusting
         case 3u: {
-            
+            var n = dnoise_3d(in.world_position.xyz, 0.05);
+            in.world_normal += n/20.0;
+            color = vec4(floor(n*15.0)/240.0 + vec3(0.63, 0.69, 0.05), 1.0);
         }
         // Bozo
         case 4u: {
