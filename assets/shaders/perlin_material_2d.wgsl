@@ -7,10 +7,11 @@
 
 @fragment
 fn fragment(mesh: VertexOutput) -> @location(0) vec4<f32> {
-    let v = noise_3d(vec3(offset + mesh.world_position.xy, globals.time*5.0), 2.5);
+
+    let v = noise_3d(vec3(offset + mesh.world_position.xy, globals.time*15.0), 10.0);
 
     // Uncomment this to use/check noise_2d:
-    // let v = random_2d(mesh.world_position.xy / 10.0);
+    // let v = noise_2d(mesh.world_position.xy, 10.0);
 
     return vec4(vec3(v), 1.0);
 }
